@@ -120,7 +120,6 @@ class RestaurantQueue
 
     private function findClosestCombination($array, $target)
     {
-        rsort($array);
         $result = [];
 
         foreach ($array as $item) {
