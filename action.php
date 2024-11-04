@@ -19,17 +19,12 @@ class RestaurantQueue
             "time_created" => date('H:i:s'),
             "assigned_to" => [] // Initialize 'assigned_to' as an empty array
         ];
-
-        // Generate a new unique key (for example, using the count of current items + 1)
         $key = count($guestQueue) + 1; // Incremental key
 
-        // Add the guest to the queue using the generated key
         $guestQueue[$key] = $guest ?? (object) array();
 
-        // Encode the updated guestQueue back to JSON
         $jsonData = json_encode($guestQueue, JSON_PRETTY_PRINT);
 
-        // Write the updated JSON back to the file
         file_put_contents("queue.json", $jsonData);
     }
 
