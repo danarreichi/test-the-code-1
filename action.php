@@ -4,21 +4,35 @@ class RestaurantQueue
     private $tableType = [2, 4, 6];
     public function addToQueue($name, $qtyPerson)
     {
-        $this->timeCheck();
         $jsonData = file_get_contents('queue.json');
         $guestQueue = json_decode($jsonData, true);
+
+        // Check if the queue is empty, if so, initialize it as an empty array
+        if ($guestQueue === null) {
+            $guestQueue = (object) [];
+        }
+
         date_default_timezone_set('Asia/Jakarta');
         $guest = [
             "name" => $name,
             "qty" => $qtyPerson,
-            "time_created" => date('H:i:s')
+            "time_created" => date('H:i:s'),
+            "assigned_to" => [] // Initialize 'assigned_to' as an empty array
         ];
-        array_push($guestQueue, $guest);
 
+        // Generate a new unique key (for example, using the count of current items + 1)
+        $key = count($guestQueue) + 1; // Incremental key
+
+        // Add the guest to the queue using the generated key
+        $guestQueue[$key] = $guest ?? (object) array();
+
+        // Encode the updated guestQueue back to JSON
         $jsonData = json_encode($guestQueue, JSON_PRETTY_PRINT);
 
+        // Write the updated JSON back to the file
         file_put_contents("queue.json", $jsonData);
     }
+
 
     public function assignTable(array $guest, array $availableTable, int $key)
     {
@@ -53,6 +67,9 @@ class RestaurantQueue
     {
         $jsonData = file_get_contents('queue.json');
         $dataArray = json_decode($jsonData, true);
+        if ($dataArray === null) {
+            $dataArray = (object) [];
+        }
         date_default_timezone_set('Asia/Jakarta');
         $currentTime = date('H:i:s');
         foreach ($dataArray as $index => &$queue) {
